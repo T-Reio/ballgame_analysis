@@ -37,3 +37,13 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# other
+pitch_all.csv
+re288.R
+event_files_bfj_trackman.R
+analysis.R
+altuve_loc.R
+altuve_call.righty.csv
+kurt_call.righty.csv
+kurt_loc.R

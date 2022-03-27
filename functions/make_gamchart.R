@@ -41,6 +41,12 @@ make_gam_grid <- function(
 geom_gamMap <- function(...) {
   ggplot(...) +
     geom_tile(aes(x = plate_x, y = plate_z,
-                fill = prob)) +
-    scale_fill_continuous(name = 'probability', type = 'viridis')
+                fill = prob))
+}
+
+geom_gamcon <- function(..., level = .5) {
+  ggplot(...) +
+    geom_contour(aes(x = plate_x, y = plate_z,
+                  fill = rounded), breaks = .5) +
+    scale_colour_gradient(name = 'スイング', low = 'white', high = '#00008b')
 }
