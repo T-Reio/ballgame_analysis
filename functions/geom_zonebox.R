@@ -16,5 +16,5 @@ geom_zonebox <- function(..., colour = 'red', scale = 'cm') {
   )
   
   geom_path(aes(x, y), data = kZone,
-              lwd = 1, colour = colour)
+              lwd = 1, colour = colour, inherit.aes = FALSE)
 }
