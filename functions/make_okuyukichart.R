@@ -2,17 +2,31 @@ make_okuyukichart <- function(
   df, release_speed = "release_speed", pfx_z = "pfx_z", 
   pitch_type = "pitch_name",
   xlab = "Velocity (km/h)", ylab = "Induced Vertical Break (cm)", 
-  split = NULL, xlims = NULL, ylims = NULL, colour_palette = NULL
+  split = NULL, xlims = NULL, ylims = NULL, colour_palette = NULL,
+  plot_type = c("colour", "fill")
 ) {
-  base <- ggplot2::ggplot(df) +
-    ggplot2::aes(x = .data[[release_speed]], 
-                 y = .data[[pfx_z]], 
-                 colour = .data[[pitch_type]]) +
-    ggplot2::geom_point(alpha = .7) +
-    ggplot2::theme_bw() +
-    ggplot2::xlab(xlab) + ggplot2::ylab(ylab) +
-    ggplot2::geom_hline(yintercept = 0) + 
-    ggplot2::labs(colour = "Pitch Type")
+  if (plot_type == "colour") {
+    base <- ggplot2::ggplot(df) +
+      ggplot2::aes(x = .data[[release_speed]], 
+                   y = .data[[pfx_z]], 
+                   colour = .data[[pitch_type]]) +
+      ggplot2::geom_point(alpha = .7) +
+      ggplot2::theme_bw() +
+      ggplot2::xlab(xlab) + ggplot2::ylab(ylab) +
+      ggplot2::geom_hline(yintercept = 0) + 
+      ggplot2::labs(colour = "Pitch Type")
+  } else {
+    base <- ggplot2::ggplot(df) +
+      ggplot2::aes(x = .data[[release_speed]], 
+                   y = .data[[pfx_z]], 
+                   fill = .data[[pitch_type]]) +
+      ggplot2::geom_point(shape = "circle filled", colour = "black", alpha = .7) +
+      ggplot2::theme_bw() +
+      ggplot2::xlab(xlab) + ggplot2::ylab(ylab) +
+      ggplot2::geom_hline(yintercept = 0) + 
+      ggplot2::labs(colour = "Pitch Type")
+  }
+  
   
   if (!is.null(colour_palette)) {
     pitch_list <- names(colour_palette) %>%
