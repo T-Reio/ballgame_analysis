@@ -106,3 +106,148 @@ geom_spraytable(data = bb,
   labs(title = 'Shohei Ohtani: Spray-Chart 2022')
 
 ggsave("fig/ohtani_spray.png", width = 8, height = 4)
+
+geom_spraytable(data = bb,
+                aes(x = hc_x, y = -hc_y,
+                    fill = base_hits)) +
+  geom_point(alpha = .9, shape = "circle filled", colour = "black", size = 2) +
+  ggplot2::scale_colour_manual(name = 'Result') +
+  scale_fill_viridis_d(name = 'Result', option = "C") +
+  theme_few() +
+  facet_wrap(~ game_month) +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank()) +
+  labs(title = 'Shohei Ohtani: Spray-Chart 2022')
+
+# No Shifted--------------------
+
+years <- 2020:2022
+
+player <- map_df(
+  .x = years,
+  .f = ~ scrape_statcast_savant(
+    start_date = paste0(.x, '-', 3, '-', '1'),
+    end_date = paste0(.x, '-', 11, '-', '30'),
+    player_type = "batter", playerid = id
+  ) %>%
+    filter(!(pitch_type %in% c("PO", "IN", "null", ""))) %>%
+    filter(game_type == "R") %>%
+    mutate(
+      pfx_x_cm = pfx_x * 30.48,
+      pfx_z_cm = pfx_z * 30.48,
+      release_speed_km = release_speed * 1.61,
+    )
+)
+
+player$bb_type %>% unique()
+player$if_fielding_alignment %>% unique()
+
+bb <- player %>%
+  filter(type == 'X') %>%
+  filter(if_fielding_alignment == "Standard") %>%
+  #filter(if_fielding_alignment == "Infield shift") %>%
+  #filter(bb_type == "ground_ball") %>%
+  mutate(
+    base_hits = factor(
+      dplyr::case_when(
+        events == 'single' ~ 'Single',
+        events == 'double' ~ 'Double',
+        events == 'triple' ~ 'Triple',
+        events == 'home_run' ~ 'HR',
+        events == 'field_error' ~ 'Error',
+        TRUE ~ 'Out'
+      ), 
+      levels = c('HR', 'Triple', 'Double', 'Single', 'Error', 'Out')
+    ),
+    Barrel = if_else(launch_speed_angle == 6, 1, 0),
+    launch_speed_km = launch_speed * 1.61,
+    game_month = month(game_date, label = T)
+  )
+
+geom_spraytable(data = bb,
+                aes(x = hc_x, y = -hc_y,
+                    fill = base_hits)) +
+  geom_point(alpha = .8, shape = "circle filled", colour = "black", size = 2) +
+  ggplot2::scale_colour_manual(name = 'Result') +
+  scale_fill_viridis_d(name = 'Result', option = "C") +
+  theme_few() +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank()) +
+  labs(title = 'Shohei Ohtani: Spray-Chart') -> all
+
+ggsave("fig/ohtani_spray_2022.png", plot = all, width = 5, height = 4)
+
+
+gb <- player %>%
+  filter(type == 'X') %>%
+  filter(if_fielding_alignment == "Standard") %>%
+  #filter(if_fielding_alignment == "Infield shift") %>%
+  filter(bb_type == "ground_ball") %>%
+  mutate(
+    base_hits = factor(
+      dplyr::case_when(
+        events == 'single' ~ 'Single',
+        events == 'double' ~ 'Double',
+        events == 'triple' ~ 'Triple',
+        events == 'home_run' ~ 'HR',
+        events == 'field_error' ~ 'Error',
+        TRUE ~ 'Out'
+      ), 
+      levels = c('HR', 'Triple', 'Double', 'Single', 'Error', 'Out')
+    ),
+    Barrel = if_else(launch_speed_angle == 6, 1, 0),
+    launch_speed_km = launch_speed * 1.61,
+    game_month = month(game_date, label = T)
+  )
+
+geom_spraytable(data = gb,
+                aes(x = hc_x, y = -hc_y,
+                    fill = base_hits)) +
+  geom_point(alpha = .8, shape = "circle filled", colour = "black", size = 2) +
+  ggplot2::scale_colour_manual(name = 'Result') +
+  scale_fill_viridis_d(name = 'Result', option = "C") +
+  theme_few() +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank()) +
+  labs(title = 'Shohei Ohtani: Spray-Chart') -> grounder
+
+ggsave("fig/ohtani_spray_2022_GB.png", plot = grounder, width = 5, height = 4)
+
+
+sh <- player %>%
+  filter(type == 'X') %>%
+  #filter(if_fielding_alignment == "Standard") %>%
+  filter(if_fielding_alignment == "Infield shift") %>%
+  filter(bb_type == "ground_ball") %>%
+  mutate(
+    base_hits = factor(
+      dplyr::case_when(
+        events == 'single' ~ 'Single',
+        events == 'double' ~ 'Double',
+        events == 'triple' ~ 'Triple',
+        events == 'home_run' ~ 'HR',
+        events == 'field_error' ~ 'Error',
+        TRUE ~ 'Out'
+      ), 
+      levels = c('HR', 'Triple', 'Double', 'Single', 'Error', 'Out')
+    ),
+    Barrel = if_else(launch_speed_angle == 6, 1, 0),
+    launch_speed_km = launch_speed * 1.61,
+    game_month = month(game_date, label = T)
+  )
+
+geom_spraytable(data = sh,
+                aes(x = hc_x, y = -hc_y,
+                    fill = base_hits)) +
+  geom_point(alpha = .8, shape = "circle filled", colour = "black", size = 2) +
+  ggplot2::scale_colour_manual(name = 'Result') +
+  scale_fill_viridis_d(name = 'Result', option = "C") +
+  theme_few() +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank()) +
+  labs(title = 'Shohei Ohtani: Spray-Chart') -> shift
+
+ggsave("fig/ohtani_spray_2022_GB_Shift.png", plot = shift, width = 5, height = 4)
+
+
+sarah <- geom_spraytable(data = player) +
+  theme_few() +
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+
+ggsave("fig/sprayChart.png", plot = sarah, width = 4, height = 4)
