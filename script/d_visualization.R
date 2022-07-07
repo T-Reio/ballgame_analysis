@@ -17,3 +17,43 @@ make_pitchLocation(
   box_colour = "black",
   plot_type = "fill"
 )
+
+P <- sample(df_sample423$Pitcher, 1)
+
+df <- df_sample423 %>%
+  filter(Pitcher == P)
+
+ggplot(df) +
+  aes(x = Extension, y = RelHeight, fill = TaggedPitchType) +
+  geom_point(shape = "circle filled") +
+  scale_fill_viridis_d() +
+  theme_bw() +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0, linetype = 2)
+  
+
+ggplot(df) +
+  aes(x = RelSide, y = RelHeight, fill = TaggedPitchType) +
+  geom_point(shape = "circle filled") +
+  scale_fill_viridis_d() +
+  theme_bw() +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0, linetype = 2)
+
+
+p_plate <- tribble(
+  ~ Side, ~ Extension,
+  -.31, 0,
+  -.31, -.152,
+  .31, -.152,
+  .31, 0,
+)
+
+ggplot(df) +
+  aes(x = RelSide, y = Extension, fill = TaggedPitchType) +
+  geom_point(shape = "circle filled") +
+  scale_fill_viridis_d() +
+  theme_bw() +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_path(p_plate, mapping = aes(x = Side, y = Extension), inherit.aes = F)

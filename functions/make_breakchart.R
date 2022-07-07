@@ -34,8 +34,13 @@ make_breakchart <- function(
     
     colour_palette <- pitch_colour[names(pitch_colour) %in% pitch_list]
     
-    base <- base +
-      ggplot2::scale_colour_manual(values = colour_palette)
+    if (plot_type == "colour") {
+      base <- base +
+        ggplot2::scale_colour_manual(values = colour_palette, name = "Pitch Type")
+    } else {
+      base <- base +
+        ggplot2::scale_fill_manual(values = colour_palette, name = "Pitch Type")
+    }
   }
   
   if (!is.null(split)) {
