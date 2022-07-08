@@ -5,6 +5,8 @@ source("functions/make_breakchart.R")
 source("functions/make_pitchLocation.R")
 source("functions/geom_zonebox.R")
 
+# BreakChart-------------------------
+
 make_breakchart(df_sample425, "HorzBreak", "InducedVertBreak", pitch_type = "TaggedPitchType", split = "Pitcher", plot_type = "fill") +
   scale_fill_viridis_d()
 
@@ -23,23 +25,7 @@ P <- sample(df_sample423$Pitcher, 1)
 df <- df_sample423 %>%
   filter(Pitcher == P)
 
-ggplot(df) +
-  aes(x = Extension, y = RelHeight, fill = TaggedPitchType) +
-  geom_point(shape = "circle filled") +
-  scale_fill_viridis_d() +
-  theme_bw() +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = 0, linetype = 2)
-  
-
-ggplot(df) +
-  aes(x = RelSide, y = RelHeight, fill = TaggedPitchType) +
-  geom_point(shape = "circle filled") +
-  scale_fill_viridis_d() +
-  theme_bw() +
-  geom_hline(yintercept = 0) +
-  geom_vline(xintercept = 0, linetype = 2)
-
+df$PitcherThrows %>% unique()
 
 p_plate <- tribble(
   ~ Side, ~ Extension,
@@ -47,13 +33,47 @@ p_plate <- tribble(
   -.31, -.152,
   .31, -.152,
   .31, 0,
+  -.31, 0,
 )
 
 ggplot(df) +
-  aes(x = RelSide, y = Extension, fill = TaggedPitchType) +
+  aes(x = RelSide, y = Extension, 
+      #fill = TaggedPitchType 
+      colour = TaggedPitchType
+      ) +
+  geom_point(
+    #shape = "circle filled"
+             ) +
+  #scale_fill_viridis_d() +
+  #scale_colour_viridis_d() +
+  theme_bw() +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_path(p_plate, mapping = aes(x = Side, y = Extension), size = 2, inherit.aes = F)
+
+ggplot(df) +
+  aes(x = RelSide, y = RelHeight, fill = TaggedPitchType) +
   geom_point(shape = "circle filled") +
   scale_fill_viridis_d() +
   theme_bw() +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0, linetype = 2) +
-  geom_path(p_plate, mapping = aes(x = Side, y = Extension), inherit.aes = F)
+  lims(x = c(-1, 1))
+
+df %>%
+  make_breakchart("HorzBreak", "InducedVertBreak", pitch_type = "TaggedPitchType", split = "Pitcher", plot_type = "fill")
+
+df %>%
+  filter(TaggedPitchType == "Fastball") %>%
+  filter(HorzBreak >= 0) %>%
+  select(RelSpeed, Tilt, SpinRate, HorzBreak, InducedVertBreak)
+
+
+make_pitchLocation(
+  df, 
+  plate_x = "PlateLocSide_cm", plate_z = "PlateLocHeight_cm",
+  colour = "TaggedPitchType",
+  split = "TaggedPitchType",
+  box_colour = "gray",
+  plot_type = "fill"
+)
