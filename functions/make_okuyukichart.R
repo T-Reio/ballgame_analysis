@@ -52,9 +52,6 @@ make_okuyukichart <- function(
   if (!is.null(xlims)) {
     base <- base + 
       ggplot2::xlim(xlims[1], xlims[2])
-  } else {
-    base <- base + 
-      ggplot2::xlim(50, 180)
   }
   
   if (!is.null(ylims)) {
