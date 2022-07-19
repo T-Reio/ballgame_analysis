@@ -106,7 +106,7 @@ player %>%
                    xwOBAcon = round(mean(estimated_woba_using_speedangle, na.rm = T), 3),
                    wOBA = round(sum(woba_value, na.rm = T) / sum(woba_denom, na.rm = T), 3),
                    PV = round(sum(-delta_run_exp, na.rm = T), 2),
-                   PV_C = round(sum(-delta_run_exp, na.rm = T) / n(), 2),
+                   PV_C = round(sum(-delta_run_exp, na.rm = T) / n() * 100, 2),
   ) %>%
   dplyr::arrange(desc(number)) %>%
   set_names(label) -> summary

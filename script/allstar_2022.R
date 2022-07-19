@@ -15,8 +15,8 @@ source("cheatsheets/event_files.R")
 LN <- 'Kershaw'
 FN <- 'Clayton'
 
-playerid_lookup(LN, FN) %>%
-  select(first_name, last_name, birth_year, mlbam_id)
+#playerid_lookup(LN, FN) %>%
+#  select(first_name, last_name, birth_year, mlbam_id)
 
 id <- c(663556, 477132)
 yr <- 2022
@@ -144,7 +144,7 @@ player %>%
                    xwOBAcon = round(mean(estimated_woba_using_speedangle, na.rm = T), 3),
                    wOBA = round(sum(woba_value, na.rm = T) / sum(woba_denom, na.rm = T), 3),
                    PV = round(sum(-delta_run_exp, na.rm = T), 2),
-                   PV_C = round(sum(-delta_run_exp, na.rm = T) / n(), 2),
+                   PV_C = round(sum(-delta_run_exp, na.rm = T) / n() * 100, 2),
   ) %>%
   left_join(., usage, by = "player_name") %>%
   mutate(usage = round(number/total * 100, 1)) %>%
