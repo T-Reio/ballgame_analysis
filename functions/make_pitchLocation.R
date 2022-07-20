@@ -35,12 +35,17 @@ make_pitchLocation <- function(
   
   if (!is.null(colour_palette)) {
     pitch_list <- names(colour_palette) %>%
-      intersect(unique(df$pitch_name))
+      intersect(unique(df[[colour]]))
     
     colour_palette <- pitch_colour[names(pitch_colour) %in% pitch_list]
     
-    base <- base +
-      ggplot2::scale_colour_manual(values = colour_palette)
+    if (plot_type == "colour"){
+      base <- base +
+        ggplot2::scale_colour_manual(values = colour_palette)
+    } else {
+      base <- base +
+        ggplot2::scale_fill_manual(values = colour_palette)
+    }
   }
   
   if (!is.null(split)) {

@@ -4,6 +4,7 @@ source("script/d_readData.R", encoding = "utf-8")
 source("functions/make_breakchart.R")
 source("functions/make_pitchLocation.R")
 source("functions/geom_zonebox.R")
+source("cheatsheets/colour_palette.R")
 
 # BreakChart-------------------------
 
@@ -49,7 +50,9 @@ ggplot(df) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0, linetype = 2) +
-  geom_path(p_plate, mapping = aes(x = Side, y = Extension), size = 2, inherit.aes = F)
+  #geom_path(p_plate, mapping = aes(x = Side, y = Extension), size = 2, inherit.aes = F) +
+  geom_rect(mapping = aes(xmin = -.31, ymin = -.152, xmax = .31, ymax = 0), colour = "black", fill = "white", size = 2, inherit.aes = F)
+
 
 ggplot(df) +
   aes(x = RelSide, y = RelHeight, fill = TaggedPitchType) +
@@ -58,15 +61,16 @@ ggplot(df) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0, linetype = 2) +
-  lims(x = c(-1, 1))
+  lims(x = c(-1, 1)) +
+  geom_rect(mapping = aes(xmin = -.31, ymin = -.127, xmax = .31, ymax = 0), colour = "black", fill = "white", inherit.aes = F)
 
 df %>%
   make_breakchart("HorzBreak", "InducedVertBreak", pitch_type = "TaggedPitchType", split = "Pitcher", plot_type = "fill")
 
-df %>%
-  filter(TaggedPitchType == "Fastball") %>%
-  filter(HorzBreak >= 0) %>%
-  select(RelSpeed, Tilt, SpinRate, HorzBreak, InducedVertBreak)
+#df %>%
+#  filter(TaggedPitchType == "Fastball") %>%
+#  filter(HorzBreak >= 0) %>%
+#  select(RelSpeed, Tilt, SpinRate, HorzBreak, InducedVertBreak)
 
 
 make_pitchLocation(
@@ -75,5 +79,7 @@ make_pitchLocation(
   colour = "TaggedPitchType",
   split = "TaggedPitchType",
   box_colour = "gray",
-  plot_type = "fill"
+  plot_type = "fill",
+  colour_palette = pitch_colour
 )
+pitch_colour
