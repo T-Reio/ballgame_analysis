@@ -52,3 +52,6 @@ d_readData.R
 # フォルダ
 
 data_sec/
+.Rproj.user
+.Rdata
+.DS_Store
