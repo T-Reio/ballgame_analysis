@@ -1,5 +1,6 @@
 library(pacman)
 p_load(viridisLite)
+p_load(ggforce)
 source("script/d_readData.R", encoding = "utf-8")
 source("functions/make_breakchart.R")
 source("functions/make_pitchLocation.R")
@@ -57,11 +58,11 @@ ggplot(df) +
 ggplot(df) +
   aes(x = RelSide, y = RelHeight, fill = TaggedPitchType) +
   geom_point(shape = "circle filled") +
-  scale_fill_viridis_d() +
   theme_bw() +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0, linetype = 2) +
-  lims(x = c(-1, 1)) +
+  lims(x = c(-1.2, 1.2)) +
+  geom_rect(mapping = aes(xmin = -1.2, ymin = -.25, xmax = 1.2, ymax = 0), fill = "#8b0000", inherit.aes = F) +
   geom_rect(mapping = aes(xmin = -.31, ymin = -.127, xmax = .31, ymax = 0), colour = "black", fill = "white", inherit.aes = F)
 
 df %>%
@@ -83,3 +84,24 @@ make_pitchLocation(
   colour_palette = pitch_colour
 )
 pitch_colour
+
+pitch <- tibble(
+  Eff = c(seq(30, 100, 10)),
+  SpinAxis = c(120, 120, 225, 180, 190, 200, 285, 195),
+  PitchType = c("Slider", "Slider", "Splitter", "Cutter", "Cutter", "Fastball", "Changeup", "Fastball")
+) %>%
+  mutate(
+    spin_axis_rad = ((-SpinAxis + 270) %% 360) / 360 * 2* pi,
+    chartX = cos(spin_axis_rad) * Eff,
+    chartY = sin(spin_axis_rad) * Eff
+  )
+
+ggplot(pitch) +
+  aes(x = chartX, y = chartY, colour = PitchType) +
+  geom_point() +
+  theme_classic() +
+  geom_circle(
+    aes(x0 = 0, y0 = 0, r = 100, alpha = 0),
+    show.legend = F,
+    inherit.aes = F
+  )

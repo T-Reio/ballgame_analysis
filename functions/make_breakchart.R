@@ -3,6 +3,7 @@ make_breakchart <- function(
   pitch_type = "pitch_name",
   xlab = "Horizontal Break (cm)", ylab = "Induced Vertical Break (cm)", 
   split = NULL, lims = NULL, colour_palette = NULL,
+  plot_alpha = .7,
   plot_type = c("colour", "fill")
 ) {
   if (plot_type == "colour") {
@@ -10,7 +11,7 @@ make_breakchart <- function(
       ggplot2::aes(x = .data[[pfx_x]], 
                    y = .data[[pfx_z]], 
                    colour = .data[[pitch_type]]) +
-      ggplot2::geom_point(alpha = .7) +
+      ggplot2::geom_point(alpha = plot_alpha) +
       ggplot2::theme_bw() +
       ggplot2::xlab(xlab) + ggplot2::ylab(ylab) +
       ggplot2::geom_hline(yintercept = 0) + ggplot2::geom_vline(xintercept = 0) +
@@ -20,7 +21,7 @@ make_breakchart <- function(
       ggplot2::aes(x = .data[[pfx_x]], 
                    y = .data[[pfx_z]], 
                    fill = .data[[pitch_type]]) +
-      ggplot2::geom_point(shape = "circle filled", colour = "black", alpha = .7) +
+      ggplot2::geom_point(shape = "circle filled", colour = "black", alpha = plot_alpha) +
       ggplot2::theme_bw() +
       ggplot2::xlab(xlab) + ggplot2::ylab(ylab) +
       ggplot2::geom_hline(yintercept = 0) + ggplot2::geom_vline(xintercept = 0) +
