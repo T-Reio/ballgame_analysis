@@ -12,8 +12,8 @@ make_releasePoints <- function(
 ) {
   if (is.null(xlab)) {
     if (type == "extension") {
-      xlab <- "Release Extension"
-      ylab <- "Release Height"
+      xlab <- "Release Side"
+      ylab <- "Release Extension"
     } else if (type == "plane") {
       xlab <- "Release Side"
       ylab <- "Release Height"

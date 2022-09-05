@@ -5,6 +5,7 @@ source("functions/make_breakchart.R")
 source("functions/make_okuyukichart.R")
 source("functions/make_pitchLocation.R")
 source("functions/geom_zonebox.R")
+source("functions/make_releasePoints.R")
 source("cheatsheets/colour_palette.R") #関数とサンプルデータの読み込み
 
 df <- bind_rows(df_sample423, df_sample425)

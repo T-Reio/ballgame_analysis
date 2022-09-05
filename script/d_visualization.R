@@ -96,12 +96,29 @@ pitch <- tibble(
     chartY = sin(spin_axis_rad) * Eff
   )
 
+scale <- seq(20, 99, 20)
 ggplot(pitch) +
   aes(x = chartX, y = chartY, colour = PitchType) +
   geom_point() +
-  theme_classic() +
+  theme_void() +
   geom_circle(
     aes(x0 = 0, y0 = 0, r = 100, alpha = 0),
     show.legend = F,
     inherit.aes = F
-  )
+  ) +
+  geom_circle(
+    data = data.frame(a = scale),
+    mapping = aes(x0 = 0, y0 = 0, r = a), linetype = 3,
+    size = .5,
+    show.legend = F,
+    inherit.aes = F
+  ) +
+  geom_line()
+
+# Zone%の計算
+df_sample423 %>%
+  mutate(
+    zone = pitch_caller(PlateLocSide_cm, PlateLocHeight_cm)
+  ) -> df_sample423
+
+mean(df_sample423$zone, na.rm = T) * 100
