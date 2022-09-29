@@ -19,7 +19,7 @@ FN <- 'Yu'
 #  select(first_name, last_name, birth_year, mlbam_id)
 
 id <- 506433
-yr <- 2022
+yr <- 2019:2022
 
 player <- map_df(
   .x = yr,
@@ -43,12 +43,12 @@ player <- map_df(
 p1 <- make_breakchart(
   player, "pfx_x_cm", "pfx_z_cm", 
   colour_palette = pitch_colour,
-  plot_type = "colour"#,
-  #split = "game_year"
+  plot_type = "colour",
+  split = "game_year"
 ) +
   ggtitle(label = paste0(FN, " ", LN, " Break Chart"))
 p1
-ggsave(paste0("fig/", LN, FN, "_breakchart.png"), p1, width = 6, height = 5)
+ggsave(paste0("fig/", LN, FN, "_breakchart_yearly.png"), p1, width = 6, height = 5)
 
 p2 <- make_okuyukichart(
   player, "release_speed_km", "pfx_z_cm",
@@ -58,7 +58,7 @@ p2 <- make_okuyukichart(
 ) +
   ggtitle(label = paste0(FN, " ", LN, "\nVelocity-Vertical Break Chart"))
 p2
-ggsave(paste0("fig/", LN, FN, "_okuyukichart.png"), p2, width = 6, height = 5)
+ggsave(paste0("fig/", LN, FN, "_okuyukichart_yearly.png"), p2, width = 6, height = 5)
 
 left <- make_pitchLocation(
   player %>% filter(stand == "L"),
@@ -118,3 +118,28 @@ player %>%
   set_names(label) -> summary
 
 write_excel_csv(summary, file = paste0("table/", LN, FN, yr, "_summary.csv"))
+
+
+# 
+
+player %>%
+  group_by(game_date) %>%
+  summarise(total = n()) -> pitch_bygame
+
+player %>%
+  left_join(., pitch_bygame) %>%
+  group_by(pitch_name, game_date) %>%
+  summarise(
+    pitches = n(),
+    ratio = round(n() / first(total) * 100, digits = 1),
+  ) %>%
+  arrange(desc(pitch_name), game_date) -> summary_bymonth
+
+ggplot(summary_bymonth %>% filter(pitch_name == "4-Seam Fastball", year(game_date) == 2022)) +
+  aes(x = game_date, y = ratio) +
+  theme_bw() +
+  geom_point(size = 3) +
+  geom_line() +
+  labs(title = 'Four-Seam Fastball Usage by Game', x = "Game Month", y = "Usage(%)") -> ff_usage
+
+ggsave(paste0("fig/", LN, FN,"_usage.png"), ff_usage, width = 6, height = 4)
