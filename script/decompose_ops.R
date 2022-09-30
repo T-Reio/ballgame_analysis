@@ -82,6 +82,8 @@ stats_league <- htmls %>%
           OBP = (H + BB + HBP) / (AB + BB + HBP + SF),
           SLG = TB / AB,
           OPS = OBP + SLG,
+          OBP_BB = (BB + HBP)  / (AB + BB + HBP + SF),
+          OBP_BH = (H)  / (AB + BB + HBP + SF),
           OPS_BB = (BB + HBP) / (AB + BB + HBP + SF),
           OPS_BH = SLG + H / (AB + BB + HBP + SF),
         ) %>%
@@ -119,6 +121,11 @@ gA <- g1 / g2
 
 ggsave("fig/OPS_decomposition_A.png", gA)
 
+
+c <- stats_league[[1]] %>%
+  pivot_longer(cols = c(OBP, SLG), names_to = "Type") %>%
+  mutate(Type = factor(Type, levels = c("SLG", "OBP")))
+
 ggplot(c) +
   aes(x = Name, y = value, fill = Type) +
   geom_bar(stat = "identity", colour = "black") +
@@ -126,11 +133,6 @@ ggplot(c) +
   theme(text = element_text(size = 10), axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_fill_viridis_d(option = "plasma") +
   labs(x = "", y = "OPS", fill = "Composition")
-
-
-c <- stats_league[[1]] %>%
-  pivot_longer(cols = c(OBP, SLG), names_to = "Type") %>%
-  mutate(Type = factor(Type, levels = c("SLG", "OBP")))
 
 long <- stats_league %>%
   map(
@@ -152,4 +154,42 @@ g4 <- g3 %+% long[[2]] +
 
 gB <- g3/g4
 
-ggsave("fig/OPS_decomposition_B.png", gB)
+ggsave("fig/OPS_decomposition_B.png", gB, width = 7, height = 7)
+
+
+
+#--------------------------------
+
+long <- stats_league %>%
+  map(
+    .x = .,
+    .f = ~ arrange(., -OBP) %>%
+      mutate(
+      Rk = row_number(),
+      Name = factor(Name, levels = Name)
+    ) %>%
+      pivot_longer(., cols = c(OBP_BB, OBP_BH), names_to = "Type") %>%
+      mutate(
+        Type = if_else(Type == "OBP_BH", "安打", "四球"),
+        Type = factor(Type, levels = c("安打", "四球"))
+      )
+  )
+
+ggplot(long[[1]]) +
+  aes(x = Name, y = value, fill = Type) +
+  geom_bar(stat = "identity", colour = "black") +
+  theme_bw() +
+  theme(text = element_text(size = 10), axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_viridis_d(option = "D") +
+  labs(x = "", y = "OBP", fill = "Composition", title = "出塁率分解: 安打 + 四死球") -> g5
+g5
+
+
+g6 <- g5 %+% long[[2]] +
+  labs(title = "")
+
+
+gC <- g5 / g6
+gC
+
+ggsave("fig/OBP_decomposition_A.png", gC, width = 7, height = 7)
